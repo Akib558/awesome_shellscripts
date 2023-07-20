@@ -1,0 +1,42 @@
+#!/bin/bash
+
+red=$'\e[1;31m'
+grn=$'\e[1;32m'
+yel=$'\e[1;33m'
+blu=$'\e[1;34m'
+mag=$'\e[1;35m'
+cyn=$'\e[1;36m'
+end=$'\e[0m'
+
+yd(){
+    echo "-------------------------------------------------------------"
+    read -p "ENTER URL: " url_name
+    read -p "Video(v) or Audio(a): " va
+
+    if [[ $va == 'a' ]]; then
+        file_path=$(find $HOME/Music/ -type d | fzf)
+        echo "${blu}=============================================================${end}"
+        yt-dlp -f 'ba*[ext=m4a]' --paths $file_path $url_name
+        if [[ $? == 0 ]]; then
+            echo "${blu}=============================================================${end}"
+            echo -e "${grn}Music downloaded into \nFolder: $file_path${end}"
+        fi
+    else
+        read -p "Video Resolution (1)480 (2)720 (3)1080 [720]: " vr
+        if [[ $vr == '1' ]]; then
+            vr=500
+        elif [[ $vr == '3' ]]; then
+            vr=1100
+        else
+            vr=800
+        fi
+        file_path=$(find $HOME/Videos/ -type d | fzf)
+        echo "${blu}=============================================================${end}"
+        yt-dlp -f "bv*[height<$vr]+ba" --paths $file_path $url_name
+        if [[ $? == 0 ]]; then
+            echo "${blu}=============================================================${end}"
+            echo -e "${grn}Video downloaded into \nFolder: $file_path${end}"
+        fi
+
+    fi
+}
